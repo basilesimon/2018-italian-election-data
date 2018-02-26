@@ -22,9 +22,6 @@ df.clean <- df %>%
   select(-TIME, -`Flag and Footnotes`, -INDIC_DE)
 names(df.clean) <- c("geo", "net_migration")
 
-# show how our dataset intersect, ie how well the merge will go
-intersect(df.clean$geo, results.clean$geo)
-
 # merge the two datasets
 df.merge <- merge(results.clean, df.clean, by="geo")
 df.merge <- df.merge %>%
@@ -37,7 +34,7 @@ plot_migration <- df.merge %>%
   scale_x_continuous(trans=log2_trans(), breaks=c(0,1000,5000,100000)) +
   geom_smooth(method="lm") + 
   facet_grid(. ~ party) + 
-  ggtitle("Number of migrants per constituency") 
+  ggtitle("2013 DATA - Number of migrants per constituency") 
 
 # load patent applications data
 patents <- read_csv("raw\ data/pat_ep_rtec_1_Data.csv")
@@ -55,7 +52,7 @@ plot_patents <- patents.merge %>%
   #scale_x_continuous(trans=log2_trans(), breaks=c(0,1000,5000,100000)) +
   geom_smooth(method="lm") + 
   facet_grid(. ~ party) + 
-  ggtitle("Patents per 10,000 inhabitants")
+  ggtitle("2013 DATA - Patents per 10,000 inhabitants")
 
 # load purchasing power standard data
 pps <- read_csv("raw\ data/nama_10r_3gdp_1_Data.csv")
@@ -73,6 +70,6 @@ plot_pps <- pps.merge %>%
   #scale_x_continuous(trans=log2_trans(), breaks=c(0,1000,5000,100000)) +
   geom_smooth(method="lm") + 
   facet_grid(. ~ party) + 
-  ggtitle("Purchasing power per inhabitant")
+  ggtitle("2013 DATA - Purchasing power per inhabitant")
 
 grid.arrange(plot_migration, plot_patents, plot_pps, nrow=3)
