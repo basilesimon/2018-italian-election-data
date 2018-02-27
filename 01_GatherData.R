@@ -72,9 +72,26 @@ unemployment_plot <- merge(results_districts_2013, unemployment, by="District") 
   facet_grid( . ~ variable) +
   ggtitle(label=unemployment_title) + times_theme()
 
+# percentage of people who have never used a computer
+# source: Eurostat | data: 2015
+itc_title <- "Difference to average IT literacy, by party"
+itc <- read_csv("data/2015_neverusedcomputer.csv")
+names(itc) <- c("District", "itc")
+
+itc_plot <- merge(results_districts_2013, itc, by="District") %>%
+  mutate(diff = 32 - itc) %>%
+  select(-`District`, -`itc`) %>%
+  melt(id=c("District Long", "diff")) %>%
+  na.omit() %>%
+  mutate(vote_share = as.numeric(value)) %>% 
+  ggplot(aes(x=`diff`, y=`vote_share`, color=variable)) + geom_point(aes(alpha=0.5)) +
+  geom_smooth(method="lm") +
+  facet_grid( . ~ variable) +
+  ggtitle(label=itc_title) + times_theme()
+
 ################################################################################
 # arrange plots together
-grid.arrange(poverty_plot, age_plot, unemployment_plot, nrow=3)
+grid.arrange(poverty_plot, age_plot, unemployment_plot, itc_plot, nrow=4)
 
 ################################################################################
 # look at regressions
@@ -109,3 +126,14 @@ unemployment_groups <- merge(results_districts_2013, unemployment, by="District"
 unemployment_models <- unemployment_groups %>% group_by(variable) %>%
   do(model = lm(vote_share ~ `ratio`, data=.))
 unemployment_models %>% glance(model)
+
+itc_groups <- merge(results_districts_2013, itc, by="District")  %>%
+  mutate(diff = 32 - itc) %>%
+  select(-`District`, -`itc`) %>%
+  melt(id=c("District Long", "diff")) %>%
+  na.omit() %>%
+  mutate(vote_share = as.numeric(value)) %>%
+  group_by(variable)
+itc_models <- itc_groups %>% group_by(variable) %>%
+  do(model = lm(vote_share ~ diff, data=.))
+itc_models %>% glance(model)
