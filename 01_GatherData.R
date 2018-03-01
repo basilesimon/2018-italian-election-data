@@ -35,7 +35,7 @@ poverty_plot <- merge(results_districts_2013, poverty, by='District') %>%
   geom_point(aes(alpha=0.5)) + 
   facet_grid(. ~ variable) + 
   geom_smooth(method="lm") +
-  ggtitle(label=poverty_title) + times_theme()
+  ggtitle(label=poverty_title) #+ times_theme()
 
 # usual resident population by NUTS-3
 # source: Eurostat | data: 2016
@@ -52,7 +52,7 @@ age_plot <- merge(results_provinces_2013, age_groups) %>%
   ggplot(aes(x=ratio, y=vote_share, color=variable)) + geom_point(aes(alpha=0.5)) +
   geom_smooth(method="lm") +
   facet_grid( . ~ variable) +
-  ggtitle(label=age_title) + times_theme()
+  ggtitle(label=age_title) #+ times_theme()
 
 # unemployment rates 
 # source: Eurostat | data: 2016
@@ -70,7 +70,7 @@ unemployment_plot <- merge(results_districts_2013, unemployment, by="District") 
   ggplot(aes(x=`ratio`, y=`vote_share`, color=variable)) + geom_point(aes(alpha=0.5)) +
   geom_smooth(method="lm") +
   facet_grid( . ~ variable) +
-  ggtitle(label=unemployment_title) + times_theme()
+  ggtitle(label=unemployment_title) #+ times_theme()
 
 # percentage of people who have never used a computer
 # source: Eurostat | data: 2015
@@ -87,7 +87,7 @@ itc_plot <- merge(results_districts_2013, itc, by="District") %>%
   ggplot(aes(x=`diff`, y=`vote_share`, color=variable)) + geom_point(aes(alpha=0.5)) +
   geom_smooth(method="lm") +
   facet_grid( . ~ variable) +
-  ggtitle(label=itc_title) + times_theme()
+  ggtitle(label=itc_title) #+ times_theme()
 
 ################################################################################
 # arrange plots together
