@@ -4,7 +4,7 @@ library(broom)
 library(ggplot2)
 library(reshape2)
 library(gridExtra)
-#library(timesTheme)
+library(timesTheme)
 
 # opposite of intersect()
 outersect <- function(x, y) {
@@ -18,7 +18,7 @@ makePlot <- function(data, x, title) {
     geom_point(aes(alpha = 0.5)) + 
     facet_grid(. ~ variable) + 
     geom_smooth(method = "lm") +
-    ggtitle(label = title) #+ times_theme()
+    ggtitle(label = title) + times_theme()
 }
 
 #########################################################################
