@@ -88,12 +88,11 @@ itc_plot <- makePlot(itc_data, itc_data$diff, itc_title)
 # net migration crude rate
 # source: Eurostat | data: 2016
 nmigration_title <- "Crude net migration rate"
-nmigration <- read_csv("data/demo_r_gind3_1_Data.csv") %>% select(-TIME, -INDIC_DE)
-names(nmigration) <- c("District", "nmigration")
+nmigration <- read_csv("data/demo_r_gind3_1_Data2.csv") %>% select(-TIME, -INDIC_DE)
+names(nmigration) <- c("Province", "nmigration")
 
-nmigration_data <- merge(results_districts_2013, nmigration, by="District") %>%
-  select(-District) %>%
-  melt(id=c("District Long", "nmigration")) %>%
+nmigration_data <- merge(results_provinces_2013, nmigration, by="Province") %>%
+  melt(id=c("Province", "nmigration")) %>%
   na.omit() %>%
   mutate(vote_share = as.numeric(value))
 nmigration_plot <- makePlot(nmigration_data, nmigration_data$nmigration, nmigration_title)
