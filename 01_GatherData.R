@@ -28,15 +28,15 @@ partiesToKeep <- c("LEGA", "FORZA ITALIA", "FRATELLI D'ITALIA CON GIORGIA MELONI
 # load all data
 provinces_regions <- read_csv("data/provinces_regions_lower.csv")
 # results_provinces_2013 <- read_csv("data/2013_results_provinces.csv")
-results_districts_2013 <- read_csv("data/2013_results_districts.csv")
+#results_districts_2013 <- read_csv("data/2013_results_districts.csv")
 results_districts_2018 <- read_csv("data/2018/results2018.csv") %>%
   select(-variable, -value) %>%
   filter(descr_lista %in% partiesToKeep) %>%
   distinct() %>%
   spread(key = descr_lista, value = perc) %>%
-  mutate(District = tolower(name)) %>% select(-name) %>%
+  mutate(`District Long` = tolower(name)) %>% select(-name) %>%
   rowwise() %>%
-  mutate(`District Long` = strsplit(District, " ")[[1]][1])
+  mutate(`District` = strsplit(`District Long`, " ")[[1]][1]) %>% distinct()
 
 # people at risk of poverty or social exclusion by NUTS-2
 # source: Eurostat | data: 2016
