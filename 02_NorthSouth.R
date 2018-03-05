@@ -13,7 +13,8 @@ makeNSPlot <- function(data, x, title) {
 #########################################################################
 # load all data
 # and match north/south regions
-results_and_regions_2013 <- left_join(results_districts_2013, provinces_regions %>% 
+results_and_regions_2018 <- left_join(results_districts_2018 %>% select(-District) %>%
+                                        rename("District" = "District Long"), provinces_regions %>% 
                                         select(District, `Macro- Region`) %>%
                                         distinct(District, `Macro- Region`), 
                                       by="District")
@@ -22,7 +23,7 @@ results_and_regions_provinces_2013 <- left_join(results_provinces_2013, province
                                                   distinct(Province, `Macro- Region`),
                                       by="Province")
 
-results_and_regions_2013 <- results_and_regions_2013 %>%
+results_and_regions_2018 <- results_and_regions_2018 %>%
   mutate(north_south = ifelse(
     `Macro- Region` == "Nord-Ovest" | `Macro- Region` == "Nord-Est","North", "the rest"))
 results_and_regions_provinces_2013 <- results_and_regions_provinces_2013 %>%

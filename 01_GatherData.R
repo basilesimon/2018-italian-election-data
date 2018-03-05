@@ -21,24 +21,36 @@ makePlot <- function(data, x, title) {
     ggtitle(label = title) + times_theme()
 }
 
+partiesToKeep <- c("LEGA", "FORZA ITALIA", "FRATELLI D'ITALIA CON GIORGIA MELONI", "NOI CON L'ITALIA - UDC",
+                   "MOVIMENTO 5 STELLE", "PARTITO DEMOCRATICO", "+EUROPA", "LIBERI E UGUALI")
+
 #########################################################################
 # load all data
-provinces_regions <- read_csv("data/provinces_regions.csv")
-results_provinces_2013 <- read_csv("data/2013_results_provinces.csv")
+provinces_regions <- read_csv("data/provinces_regions_lower.csv")
+# results_provinces_2013 <- read_csv("data/2013_results_provinces.csv")
 results_districts_2013 <- read_csv("data/2013_results_districts.csv")
+results_districts_2018 <- read_csv("data/2018/results2018.csv") %>%
+  select(-variable, -value) %>%
+  filter(descr_lista %in% partiesToKeep) %>%
+  distinct() %>%
+  spread(key = descr_lista, value = perc) %>%
+  mutate(District = tolower(name)) %>% select(-name) %>%
+  rowwise() %>%
+  mutate(`District Long` = strsplit(District, " ")[[1]][1])
 
 # people at risk of poverty or social exclusion by NUTS-2
 # source: Eurostat | data: 2016
 poverty_title <- "People at risk of poverty or social exclusion, by party"
 poverty <- read_csv("data/ilc_peps11_1_Data.csv") %>%
-  select(-`Flag and Footnotes`, -TIME, -UNIT)
-names(poverty) <- c('District', 'poverty_2016')
+  select(-`Flag and Footnotes`, -TIME, -UNIT) %>%
+  mutate(District = tolower(GEO)) %>% select(-GEO)
+names(poverty) <- c('poverty_2016', 'District')
 
-poverty_data <- merge(results_districts_2013, poverty, by='District') %>%
+poverty_data <- merge(results_districts_2018, poverty, by='District') %>%
   select(-District) %>%
   melt(id=c("District Long", "poverty_2016")) %>% 
   na.omit() %>%
-  mutate(vote_share = as.numeric(value)) %>%
+  mutate(vote_share = as.numeric(sub(",", ".", value, fixed = TRUE))) %>%
   select(-value)
 poverty_plot <- makePlot(poverty_data, poverty_data$poverty_2016, poverty_title)
 
@@ -60,29 +72,31 @@ age_plot <-  makePlot(age_data, age_data$ratio, age_title)
 # source: Eurostat | data: 2016
 # plot and lm based on a ratio between 15-24 y.o. and general population (15 to 74)
 unemployment_title <- "Youth unemployment compared to the general pop, by party"
-unemployment <- read_csv("data/unemployment_2016.csv")
-names(unemployment) <- c('District', '15_24', 'over_25', '15_74')
+unemployment <- read_csv("data/unemployment_2016.csv") %>%
+  mutate(District = tolower(GEO)) %>% select(-GEO)
+names(unemployment) <- c('15_24', 'over_25', '15_74', 'District')
 
-unemployment_data <- merge(results_districts_2013, unemployment, by="District") %>%
+unemployment_data <- merge(results_districts_2018, unemployment, by="District") %>%
   mutate(ratio = `15_24` / `15_74`) %>%
   select(-`15_24`, -`over_25`, -`15_74`, -`District`) %>%
   melt(id=c("District Long", "ratio")) %>%
   na.omit() %>%
-  mutate(vote_share = as.numeric(value))
+  mutate(vote_share = as.numeric(sub(",", ".", value, fixed = TRUE))) %>% select(-value)
 unemployment_plot <- makePlot(unemployment_data, unemployment_data$ratio, unemployment_title)
 
 # percentage of people who have never used a computer
 # source: Eurostat | data: 2015
 itc_title <- "Difference to average IT literacy, by party"
-itc <- read_csv("data/2015_neverusedcomputer.csv")
-names(itc) <- c("District", "itc")
+itc <- read_csv("data/2015_neverusedcomputer.csv")  %>%
+  mutate(District = tolower(GEO)) %>% select(-GEO)
+names(itc) <- c("itc", "District")
 
-itc_data <- merge(results_districts_2013, itc, by="District") %>%
+itc_data <- merge(results_districts_2018, itc, by="District") %>%
   mutate(diff = 32 - itc) %>%
   select(-`District`, -`itc`) %>%
   melt(id=c("District Long", "diff")) %>%
   na.omit() %>%
-  mutate(vote_share = as.numeric(value))
+  mutate(vote_share = as.numeric(sub(",", ".", value, fixed = TRUE))) %>% select(-value)
 itc_plot <- makePlot(itc_data, itc_data$diff, itc_title)
 
 # net migration crude rate
@@ -99,7 +113,10 @@ nmigration_plot <- makePlot(nmigration_data, nmigration_data$nmigration, nmigrat
 
 ################################################################################
 # arrange plots together
-grid.arrange(poverty_plot, age_plot, unemployment_plot, itc_plot, nmigration_plot, nrow=5)
+grid.arrange(poverty_plot,
+             # age_plot, 
+             unemployment_plot, itc_plot, #nmigration_plot, 
+             nrow=3)
 
 ################################################################################
 # look at regressions
