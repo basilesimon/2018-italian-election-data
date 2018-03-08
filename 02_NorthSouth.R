@@ -1,4 +1,5 @@
 
+# plot shorthand function, colouring by north/south divide
 makeNSPlot <- function(data, x, title) {
   ggplot(data = data,
          aes(x = x, y = vote_share, color = north_south)) +
@@ -14,20 +15,14 @@ makeNSPlot <- function(data, x, title) {
 # load all data
 # and match north/south regions
 results_and_regions_2018 <- left_join(results_districts_2018, provinces_regions %>% 
-                                        select(District, `Macro- Region`) %>%
-                                        distinct(District, `Macro- Region`), 
-                                      by="District")
-# results_and_regions_provinces_2013 <- left_join(results_provinces_2013, provinces_regions %>%
-#                                                   select(Province, `Macro- Region`) %>%
-#                                                   distinct(Province, `Macro- Region`),
-#                                       by="Province")
+     select(District, `Macro- Region`) %>%
+     distinct(District, `Macro- Region`), 
+   by="District")
 
 results_and_regions_2018 <- results_and_regions_2018 %>%
   mutate(north_south = ifelse(
-    `Macro- Region` == "nord-ovest" | `Macro- Region` == "nord-est","north", "the rest"))
-# results_and_regions_provinces_2013 <- results_and_regions_provinces_2013 %>%
-#   mutate(north_south = ifelse(
-#     `Macro- Region` == "Nord-Ovest" | `Macro- Region` == "Nord-Est","North", "the rest"))
+    `Macro- Region` == "nord-ovest" | `Macro- Region` == "nord-est","north", "the rest")
+  )
   
 poverty_data <- merge(results_and_regions_2018, poverty, by='District') %>%
   select(-`Macro- Region`) %>%
@@ -74,3 +69,34 @@ nmigration_northsouth_ <- makeNSPlot(nmigration_data, nmigration_data$nmigration
 grid.arrange(poverty_northsouth_, #age_northsouth_, 
              unemployment_northsouth_, itc_northsouth_, #nmigration_northsouth_, 
              nrow=3)
+
+################################################################################
+# the unemployment ratio was confusing, let's explain it
+unemployment2 <- merge(results_and_regions_2018, unemployment, by="District") %>%
+  mutate(ratio = `15_24` / `15_74`) %>%
+  select(-`over_25`, -`District`, -`Macro- Region`) %>%
+  select(`District Long`, north_south, "15_24", "15_74", ratio, `MOVIMENTO 5 STELLE`) %>%
+  mutate(vote_share = as.numeric(sub(",", ".", `MOVIMENTO 5 STELLE`, fixed = TRUE))) %>%
+  select(-`MOVIMENTO 5 STELLE`) %>%
+  melt(id.vars=c("District Long", "north_south", "vote_share"))
+
+one <- ggplot(unemployment2 %>% filter(variable == "15_24" | variable == "15_74"),
+              aes(x = value, y = vote_share,
+                  color = north_south)) +
+  geom_point(aes(alpha = 0.5))  + 
+  facet_grid(. ~ variable) + 
+  geom_smooth(method="lm") +
+  times_theme()
+three <- ggplot(unemployment2 %>% filter(variable == "ratio"),
+              aes(x = value, y = vote_share,
+                  color = north_south)) +
+  geom_point(aes(alpha = 0.5))  + 
+  geom_smooth(method="lm") +
+  times_theme() +
+  theme(legend.position="right")
+
+grid.arrange(one, three,
+             ncol=2, top = "Five Start performs better as both youth and general
+              unemployement rise, but lose shares of the vote is unemployment is evenly
+             distributed in the population")
+

@@ -12,6 +12,7 @@ outersect <- function(x, y) {
          setdiff(y, x)))
 }
 
+# our plotting shorthand function
 makePlot <- function(data, x, title) {
   ggplot(data = data,
          aes(x = x, y = vote_share, color = variable)) +
@@ -21,14 +22,12 @@ makePlot <- function(data, x, title) {
     ggtitle(label = title) + times_theme()
 }
 
-partiesToKeep <- c("LEGA", "FORZA ITALIA", "FRATELLI D'ITALIA CON GIORGIA MELONI", "NOI CON L'ITALIA - UDC",
-                   "MOVIMENTO 5 STELLE", "PARTITO DEMOCRATICO", "+EUROPA", "LIBERI E UGUALI")
+# most important parties in this election
+partiesToKeep <- c("LEGA", "FORZA ITALIA", "FRATELLI D'ITALIA CON GIORGIA MELONI", "NOI CON L'ITALIA - UDC", "MOVIMENTO 5 STELLE", "PARTITO DEMOCRATICO", "+EUROPA", "LIBERI E UGUALI")
 
 #########################################################################
 # load all data
 provinces_regions <- read_csv("data/provinces_regions_lower.csv")
-# results_provinces_2013 <- read_csv("data/2013_results_provinces.csv")
-#results_districts_2013 <- read_csv("data/2013_results_districts.csv")
 results_districts_2018 <- read_csv("data/2018/results2018.csv") %>%
   select(-variable, -value) %>%
   filter(descr_lista %in% partiesToKeep) %>%
@@ -120,6 +119,7 @@ grid.arrange(poverty_plot,
 
 ################################################################################
 # look at regressions
+# pay close attention to r-squares
 poverty_models <- poverty_data %>% group_by(variable) %>%
   do(model = lm(vote_share ~ poverty_2016, data=.))
 poverty_models %>% glance(model)

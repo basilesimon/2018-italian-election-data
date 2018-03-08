@@ -1,7 +1,14 @@
 # 2018 Italian election data
 
-- `raw data/` contains raw data from [NSD database](http://www.nsd.uib.no/european_election_database/country/italy/) as well as NUTS3-level indicators from Eurostat
-- `results2008-2013.csv` merges the province-level results for 2008 and 2013, and adds the difference in vote share (2013 minus 2008), since there were electoral reforms in between
-- `script.R` draws scatterplot comparing 2013 results per district and purchasing power, patents per thousand inhabitants, and net migration
+This repository contains the data source and code needed to reproduce our [analysis of the 2018 Italian election results](https://www.thetimes.co.uk/article/italian-election-2018-results-and-analysis-xpddmqprl), as published in The Times 7th March 2018 edition.
 
-*to add*: district-level result data
+![](./img/scatterplot.png)
+
+![scatterplot of vote share per party](./img/Rplot01.png)
+![scatterplot of vote share per party](./img/Rplot02.png)
+
+## how to use and read
+
+* `GatherData.R` will load all the required dependencies and data from CSV files in `/data`.  
+Thematic data frames will be created for each studied variable (risk of poverty and social exclusion, IT literacy, youth unemployment, etc.). It will arrange all our plots on a single page and print out a `glance()` of the linear regressions we ran, so as to study how well our models fit the data.
+* `NorthSouth.R` will run a similar analysis but will break down the country into north and south.
