@@ -56,16 +56,16 @@ poverty_plot <- makePlot(poverty_data, poverty_data$poverty_2016, poverty_title)
 # usual resident population by NUTS-3
 # source: Eurostat | data: 2016
 # plot and lm based on a ratio between 65+ compared to the younger population (15 to 64)
-age_title <- "Over 65 compared to the general pop, by party"
-age_groups <- read_csv("data/20152016_age_groups.csv")
-names(age_groups) <- c('Province', '15_64', 'over_65')
-
-age_data <- merge(results_provinces_2013, age_groups) %>% 
-  mutate(ratio = `over_65` / `15_64`) %>% 
-  select(-`15_64`, -`over_65`) %>%
-  melt(id=c("Province", "ratio")) %>%
-  mutate(vote_share = as.numeric(value)) 
-age_plot <-  makePlot(age_data, age_data$ratio, age_title)
+# age_title <- "Over 65 compared to the general pop, by party"
+# age_groups <- read_csv("data/20152016_age_groups.csv")
+# names(age_groups) <- c('Province', '15_64', 'over_65')
+# 
+# age_data <- merge(results_provinces_2013, age_groups) %>% 
+#   mutate(ratio = `over_65` / `15_64`) %>% 
+#   select(-`15_64`, -`over_65`) %>%
+#   melt(id=c("Province", "ratio")) %>%
+#   mutate(vote_share = as.numeric(value)) 
+# age_plot <-  makePlot(age_data, age_data$ratio, age_title)
 
 # unemployment rates 
 # source: Eurostat | data: 2016
@@ -100,15 +100,15 @@ itc_plot <- makePlot(itc_data, itc_data$diff, itc_title)
 
 # net migration crude rate
 # source: Eurostat | data: 2016
-nmigration_title <- "Crude net migration rate"
-nmigration <- read_csv("data/demo_r_gind3_1_Data2.csv") %>% select(-TIME, -INDIC_DE)
-names(nmigration) <- c("Province", "nmigration")
-
-nmigration_data <- merge(results_provinces_2013, nmigration, by="Province") %>%
-  melt(id=c("Province", "nmigration")) %>%
-  na.omit() %>%
-  mutate(vote_share = as.numeric(value))
-nmigration_plot <- makePlot(nmigration_data, nmigration_data$nmigration, nmigration_title)
+# nmigration_title <- "Crude net migration rate"
+# nmigration <- read_csv("data/demo_r_gind3_1_Data2.csv") %>% select(-TIME, -INDIC_DE)
+# names(nmigration) <- c("Province", "nmigration")
+# 
+# nmigration_data <- merge(results_provinces_2013, nmigration, by="Province") %>%
+#   melt(id=c("Province", "nmigration")) %>%
+#   na.omit() %>%
+#   mutate(vote_share = as.numeric(value))
+# nmigration_plot <- makePlot(nmigration_data, nmigration_data$nmigration, nmigration_title)
 
 ################################################################################
 # arrange plots together

@@ -32,12 +32,12 @@ poverty_data <- merge(results_and_regions_2018, poverty, by='District') %>%
   select(-value)
 poverty_northsouth_ <- makeNSPlot(poverty_data, poverty_data$poverty_2016, poverty_title)
 
-age_data <- merge(results_and_regions_provinces_2013, age_groups) %>% 
-  mutate(ratio = `over_65` / `15_64`) %>% 
-  select(-`15_64`, -`over_65`, -`Macro- Region`) %>%
-  melt(id=c("Province", "ratio", "north_south")) %>%
-  mutate(vote_share = as.numeric(value)) 
-age_northsouth_ <-  makeNSPlot(age_data, age_data$ratio, age_title)
+# age_data <- merge(results_and_regions_provinces_2013, age_groups) %>% 
+#   mutate(ratio = `over_65` / `15_64`) %>% 
+#   select(-`15_64`, -`over_65`, -`Macro- Region`) %>%
+#   melt(id=c("Province", "ratio", "north_south")) %>%
+#   mutate(vote_share = as.numeric(value)) 
+# age_northsouth_ <-  makeNSPlot(age_data, age_data$ratio, age_title)
 
 unemployment_data <- merge(results_and_regions_2018, unemployment, by="District") %>%
   mutate(ratio = `15_24` / `15_74`) %>%
@@ -57,12 +57,12 @@ itc_data <- merge(results_and_regions_2018, itc, by="District") %>%
   select(-value)
 itc_northsouth_ <- makeNSPlot(itc_data, itc_data$diff, itc_title)
 
-nmigration_data <- merge(results_and_regions_provinces_2013, nmigration, by="Province") %>%
-  select(-`Macro- Region`) %>%
-  melt(id=c("Province", "nmigration", "north_south")) %>%
-  na.omit() %>%
-  mutate(vote_share = as.numeric(value))
-nmigration_northsouth_ <- makeNSPlot(nmigration_data, nmigration_data$nmigration, nmigration_title)
+# nmigration_data <- merge(results_and_regions_provinces_2013, nmigration, by="Province") %>%
+#   select(-`Macro- Region`) %>%
+#   melt(id=c("Province", "nmigration", "north_south")) %>%
+#   na.omit() %>%
+#   mutate(vote_share = as.numeric(value))
+# nmigration_northsouth_ <- makeNSPlot(nmigration_data, nmigration_data$nmigration, nmigration_title)
 
 ################################################################################
 # arrange plots together
